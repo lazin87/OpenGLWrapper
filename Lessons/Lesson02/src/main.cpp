@@ -7,7 +7,7 @@
 
 using namespace RL::GL;
 
-class HelloRenderer2 : public IRenderer
+class Lesson02_triangle : public IRenderer
 {
     const std::vector<float> triangle = {
         0.5f,  0.5f,  0.0f, // top right
@@ -23,13 +23,13 @@ class HelloRenderer2 : public IRenderer
 public:
     void init() override
     {
-        m_program.addShader("shaders/vs.vert");
-        m_program.addShader("shaders/fs.frag");
+        m_program.addShader("resources/vs.vert");
+        m_program.addShader("resources/fs.frag");
         m_program.build();
 
         m_vao.setVericesData(triangle);
         m_vao.setIndices(indices);
-        m_vao.setVertexAttribPointersConfig({{0, GLSLType::vec3, false, 3 * sizeof(float), (void* )0}});
+        m_vao.setVertexAttribPointersConfig({0, GLSLType::vec3, false, 3 * sizeof(float), (void* )0});
         m_vao.build();
     }
 
@@ -45,3 +45,15 @@ private:
     Program m_program;
     VertexArrayObject m_vao;
 };
+
+int main()
+{
+    WindowContext windowContext({3, 3, true});
+    windowContext.createWindow({"Hello OpenGL", 800, 600, 0, 0});
+
+    auto renderer = std::make_shared<Lesson02_triangle>();
+    windowContext.setRenderer(renderer);
+    windowContext.show();
+
+    return 0;
+}

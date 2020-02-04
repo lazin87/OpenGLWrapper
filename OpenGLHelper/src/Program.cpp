@@ -1,6 +1,7 @@
 #include "Program.h"
 
 #include "Logger.h"
+#include "Utilities.h"
 
 #include <glad/glad.h>
 
@@ -43,7 +44,7 @@ int toGLShaderType(const ShaderType type)
     }
 }
 
-ShaderType getShaderType(const std::string &fileName)
+ShaderType getShaderType(const std::string &path)
 {
     static const std::map<std::string, ShaderType> stringToShaderType{
          {"vert", ShaderType::VERTEX_SHADER}
@@ -59,18 +60,11 @@ ShaderType getShaderType(const std::string &fileName)
         ,{"comp", ShaderType::COMPUTE_SHADER}
 #endif
     };
-    const auto extensionBeforeStart = fileName.rfind(".");
-    if(extensionBeforeStart == std::string::npos)
-        return ShaderType::INVALID;
 
-    std::string extension = fileName.substr(extensionBeforeStart + 1U);
-    std::transform(std::cbegin(extension), std::cend(extension), std::begin(extension),
-                   [](const char c) { return std::tolower(c); } );
-
-    auto shaderTypeItr = stringToShaderType.find(extension);
+    auto shaderTypeItr = stringToShaderType.find(getFileExtension(path));
     if(shaderTypeItr == std::cend(stringToShaderType))
     {
-        logError(__FUNCTION__, "Can not determine the shader type or it is not supported by OpenGL: " + fileName);
+        logError(__FUNCTION__, "Can not determine the shader type or it is not supported by OpenGL: " + path);
         return ShaderType::INVALID;
     }
     else

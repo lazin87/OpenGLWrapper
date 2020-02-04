@@ -59,9 +59,9 @@ void VertexArrayObject::setIndices(const std::vector<unsigned int> &indices)
     m_indices = indices;
 }
 
-void VertexArrayObject::setVertexAttribPointersConfig(const std::vector<VertexAttribPointerConfig> &data)
+void VertexArrayObject::setVertexAttribPointersConfig(const VertexAttribPointerConfig &data)
 {
-    m_vertexAttribPointersConfig = data;
+    m_vertexAttribPointersConfig.push_back(data);
 }
 
 void VertexArrayObject::build()

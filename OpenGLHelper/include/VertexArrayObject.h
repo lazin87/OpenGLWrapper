@@ -36,7 +36,7 @@ public:
 
     void setVericesData(const std::vector<float>& data);
     void setIndices(const std::vector<unsigned int>& indices);
-    void setVertexAttribPointersConfig(const std::vector<VertexAttribPointerConfig>& data);
+    void setVertexAttribPointersConfig(const VertexAttribPointerConfig &data);
 
     void build();
     unsigned int getId() const noexcept;

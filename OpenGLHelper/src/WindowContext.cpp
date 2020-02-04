@@ -27,6 +27,7 @@ WindowContext::WindowContext(const WindowContext::GLVersion &glVersion)
 
 WindowContext::~WindowContext()
 {
+    m_renderer.reset();
     glfwTerminate();
 }
 
