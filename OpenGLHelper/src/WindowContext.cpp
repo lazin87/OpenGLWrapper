@@ -53,9 +53,6 @@ void WindowContext::show()
     const auto window = m_windowContext->window;
     while(!glfwWindowShouldClose(window))
     {
-        glClearColor(0.5F, 0.1F, 0.3F, 1.0F);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         if(m_renderer) m_renderer->render();
 
         glfwPollEvents();

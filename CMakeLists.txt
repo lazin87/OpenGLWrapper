@@ -8,4 +8,5 @@ add_subdirectory(OpenGLHelper)
 
 add_subdirectory(Lessons/Lesson02)
 add_subdirectory(Lessons/Lesson03)
+add_subdirectory(Lessons/Lesson04)
 
