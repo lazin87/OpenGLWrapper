@@ -1,8 +1,8 @@
 #pragma once
 
 #include "IRenderer.h"
+#include "IInputHandler.h"
 
-#include <map>
 #include <memory>
 #include <string>
 
@@ -48,15 +48,23 @@ public:
     ~WindowContext();
 
     void createWindow(const WindowParams& windowParams); //throws std::logic_error in case of initialization failure.
+
+    void enableMouseHandling();
+
+    void set(std::shared_ptr<IRenderer> renderer);
+    void set(std::shared_ptr<IInputHandler> inputHandler);
+
     void show();
 
-    void setRenderer(std::shared_ptr<IRenderer> renderer);
-
 private:
+    void onCursorMoved(GLFWwindow *w, double x, double y);
+    void onScrollChanged(GLFWwindow *w, double x, double y);
+
     const GLVersion m_glVersion{3, 3, true};
 
     std::unique_ptr<WindowContextData> m_windowContext;
     std::shared_ptr<IRenderer> m_renderer;
+    std::shared_ptr<IInputHandler> m_inputHandler;
 };
 
 } // namespace GL

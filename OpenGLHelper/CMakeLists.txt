@@ -4,7 +4,7 @@ project(OpenGLHelper VERSION 1.0.0 LANGUAGES CXX)
 find_package(OpenGL REQUIRED)
 
 add_library(OpenGLHelper
-    src/IRenderer.cpp
+    src/Camera.cpp
     src/Logger.cpp
     src/Program.cpp
     src/Texture2D.cpp
@@ -29,3 +29,6 @@ target_link_libraries(OpenGLHelper
     glfw3
     GL)
 add_library(Rafal::OpenGLHelper ALIAS OpenGLHelper)
+
+file(GLOB_RECURSE HeaderFiles "*.h")
+add_custom_target(headers SOURCES ${HeaderFiles})

@@ -52,7 +52,7 @@ int main()
     windowContext.createWindow({"Hello OpenGL", 800, 600, 0, 0});
 
     auto renderer = std::make_shared<Lesson02_triangle>();
-    windowContext.setRenderer(renderer);
+    windowContext.set(renderer);
     windowContext.show();
 
     return 0;
