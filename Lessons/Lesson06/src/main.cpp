@@ -103,7 +103,7 @@ public:
         glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindVertexArray(m_vaoCube.getId());
+        m_vaoCube.use();
 
         if(m_camera)
         {

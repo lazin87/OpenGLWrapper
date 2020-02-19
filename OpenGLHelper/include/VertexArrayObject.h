@@ -39,6 +39,7 @@ public:
     void setVertexAttribPointersConfig(const VertexAttribPointerConfig &data);
 
     void build();
+    void use();
     unsigned int getId() const noexcept;
 
 private:

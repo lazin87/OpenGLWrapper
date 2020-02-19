@@ -100,6 +100,11 @@ void VertexArrayObject::build()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void VertexArrayObject::use()
+{
+    glBindVertexArray(m_vaoGlId);
+}
+
 unsigned int VertexArrayObject::getId() const noexcept
 {
     return m_vaoGlId;
