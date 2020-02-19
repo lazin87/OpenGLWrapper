@@ -9,10 +9,13 @@
 #include <iterator>
 #include <fstream>
 #include <map>
+#include <optional>
 
 namespace RL {
 
 namespace GL {
+
+namespace {
 
 int toGLShaderType(const ShaderType type)
 {
@@ -73,6 +76,31 @@ ShaderType getShaderType(const std::string &path)
     }
 }
 
+struct ProgramGuard
+{
+
+    ProgramGuard() = delete;
+    ProgramGuard(ProgramGuard&&) = delete;
+
+    ~ProgramGuard() { glUseProgram(0); }
+};
+
+static std::optional<ProgramGuard> lockSafe(const GLuint id)
+{
+    GLint current;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+    if( (current != 0) && (current != id) )
+    {
+        logWarning(__FUNCTION__, "Can not lock, because another program is in use.");
+        return {};
+    }
+
+    glUseProgram(id);
+    return std::optional<ProgramGuard>{};
+}
+
+} // namespace
+
 void setDefault(Shader &s)
 {
     s.type = ShaderType::INVALID;
@@ -125,11 +153,54 @@ void Program::build()
         glDeleteShader(s.glId);
         s.glId = 0;
     }
+
+    static const GLchar modelName[] = "model";
+    m_modelLocation = glGetUniformLocation(m_glId, modelName);
+    static const GLchar viewName[] = "view";
+    m_viewLocation = glGetUniformLocation(m_glId, viewName);
+    static const GLchar projectionName[] = "projection";
+    m_projectionLocation = glGetUniformLocation(m_glId, projectionName);
+}
+
+void Program::use()
+{
+    glUseProgram(m_glId);
+}
+
+void Program::setUniform(const std::string &name, glm::vec3 value)
+{
+    setUniformImpl(name, value);
+}
+
+void Program::setModelMatrix(const glm::mat4 &m)
+{
+    setUniformImpl(m_modelLocation, m);
+}
+
+void Program::setViewMatrix(const glm::mat4 &m)
+{
+    setUniformImpl(m_viewLocation, m);
+}
+
+void Program::setProjectionMatrix(const glm::mat4 &m)
+{
+    setUniformImpl(m_projectionLocation, m);
 }
 
 unsigned int Program::getId() const noexcept
 {
     return m_glId;
+}
+
+
+void Program::setUniformGlWrapper(int location, const glm::mat4 &m) const
+{
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Program::setUniformGlWrapper(int location, const glm::vec3 &v) const
+{
+    glUniform3f(location, v[0], v[1], v[2]);
 }
 
 void Program::loadShaders()
@@ -159,6 +230,27 @@ void Program::loadShaders()
             logError(__FUNCTION__, "Can not find file: " + s.path);
         }
     }
+}
+
+int Program::getUniformLocation(const std::string &name)
+{
+    int location = INVALID_LOCATION;
+
+    const auto u = m_uniformsLocation.find(name);
+    if(u == m_uniformsLocation.cend())
+    {
+        location = glGetUniformLocation(m_glId, name.c_str());
+        std::string n2 = name;
+        m_uniformsLocation.insert({n2, location});
+        if(location == INVALID_LOCATION)
+            logWarning(__FUNCTION__, "Uniform not found: " + name);
+    }
+    else
+    {
+        location = u->second;
+    }
+
+    return location;
 }
 
 } // namespace GL

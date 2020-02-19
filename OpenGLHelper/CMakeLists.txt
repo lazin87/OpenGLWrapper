@@ -22,7 +22,7 @@ target_include_directories(OpenGLHelper
     )
 target_compile_features(OpenGLHelper
     PRIVATE
-    cxx_std_14)
+    cxx_std_17)
 target_link_libraries(OpenGLHelper
     PRIVATE
     Glad::Glad
