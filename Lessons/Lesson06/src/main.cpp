@@ -91,13 +91,13 @@ public:
 
         m_programMain.use();
         const auto unityMatrix = glm::mat4{1.0F};
-        m_programMain.setModelMatrix(unityMatrix);
+        m_programMain.setModelMatrix(m_objectModelMatrix);
         m_programMain.setViewMatrix(unityMatrix);
         m_programMain.setProjectionMatrix(unityMatrix);
+        m_programMain.setNormalMatrix(unityMatrix);
         m_programMain.setUniform("lightColor", {1.0F, 0.5F, 0.31F});
         m_programMain.setUniform("objectColor", {1.0F, 1.0F, 1.0F});
         m_programMain.setUniform("lightPos", m_lightPosition);
-        if(m_camera) m_programMain.setUniform("viewPos", m_camera->getParams().position);
 
         m_programLight.use();
         auto lightTransform = glm::translate(unityMatrix, m_lightPosition);
@@ -117,10 +117,15 @@ public:
         if(m_camera)
         {
             m_programMain.use();
-            m_programMain.setUniform("viewPos", m_camera->getParams().position);
 
-            m_programMain.setViewMatrix(m_camera->getViewMatrix());
+            const auto viewMatrix = m_camera->getViewMatrix();
+            m_programMain.setViewMatrix(viewMatrix);
             m_programMain.setProjectionMatrix(m_camera->getProjectionMatrix());
+
+            const auto normalMatrix = glm::mat3 (
+                        glm::transpose( glm::inverse(viewMatrix * m_objectModelMatrix) )
+                        );
+            m_programMain.setNormalMatrix(normalMatrix);
 
             m_programLight.use();
             m_programLight.setViewMatrix(m_camera->getViewMatrix());
@@ -142,6 +147,8 @@ public:
     }
 
 private:
+    glm::mat4 m_objectModelMatrix {1.0F};
+
     Program m_programMain;
     Program m_programLight;
     VertexArrayObject m_vaoCube;

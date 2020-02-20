@@ -54,6 +54,7 @@ public:
     void setModelMatrix(const glm::mat4& m);
     void setViewMatrix(const glm::mat4& m);
     void setProjectionMatrix(const glm::mat4& m);
+    void setNormalMatrix(const glm::mat3& m);
 
     unsigned int getId() const noexcept;
 
@@ -62,6 +63,7 @@ private:
 
     int getUniformLocation(const std::string& name);
 
+    void setUniformGlWrapper(int location, const glm::mat3& m) const;
     void setUniformGlWrapper(int location, const glm::mat4& m) const;
     void setUniformGlWrapper(int location, const glm::vec3& v) const;
 
@@ -76,6 +78,7 @@ private:
     int m_modelLocation {INVALID_LOCATION};
     int m_viewLocation {INVALID_LOCATION};
     int m_projectionLocation {INVALID_LOCATION};
+    int m_normalMatrixLocation {INVALID_LOCATION};
 
     std::array<Shader, static_cast<size_t>(ShaderType::COUNT)> m_shaders;
     std::unordered_map<std::string, int> m_uniformsLocation{};

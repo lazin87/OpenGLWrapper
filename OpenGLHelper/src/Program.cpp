@@ -160,6 +160,8 @@ void Program::build()
     m_viewLocation = glGetUniformLocation(m_glId, viewName);
     static const GLchar projectionName[] = "projection";
     m_projectionLocation = glGetUniformLocation(m_glId, projectionName);
+    static const GLchar normalMatrixName[] = "normalMatrix";
+    m_normalMatrixLocation = glGetUniformLocation(m_glId, normalMatrixName);
 }
 
 void Program::use()
@@ -187,11 +189,20 @@ void Program::setProjectionMatrix(const glm::mat4 &m)
     setUniformImpl(m_projectionLocation, m);
 }
 
+void Program::setNormalMatrix(const glm::mat3 &m)
+{
+    setUniformImpl(m_normalMatrixLocation, m);
+}
+
 unsigned int Program::getId() const noexcept
 {
     return m_glId;
 }
 
+void Program::setUniformGlWrapper(int location, const glm::mat3 &m) const
+{
+    glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(m));
+}
 
 void Program::setUniformGlWrapper(int location, const glm::mat4 &m) const
 {
