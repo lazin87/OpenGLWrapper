@@ -18,47 +18,47 @@ class Lesson06: public IRenderer
 
 public:
     const std::vector<float> cube_vertices = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-        -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-         0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  1.0F, 1.0F,
-         0.5F,  0.5F,  0.5F,  1.0F, 1.0F,
-        -0.5F,  0.5F,  0.5F,  0.0F, 1.0F,
-        -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-        -0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-        -0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-        -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-        -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-        -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-        -0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-         0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-         0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-         0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-        -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  1.0F, 1.0F,
-         0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-         0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-        -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-        -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-        -0.5F,  0.5F, -0.5F,  0.0F, 1.0F,
-         0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-         0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-        -0.5F,  0.5F,  0.5F,  0.0F, 0.0F,
-        -0.5F,  0.5F, -0.5F,  0.0F, 1.0F
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     void init() override
@@ -77,9 +77,16 @@ public:
         m_vaoCube.setVertexAttribPointersConfig({ 0
                                                 , GLSLType::vec3
                                                 , false
-                                                , 5 * sizeof(float)
+                                                , 6 * sizeof(float)
                                                 , (void*) 0
                                                 });
+        m_vaoCube.setVertexAttribPointersConfig({ 1
+                                                , GLSLType::vec3
+                                                , false
+                                                , 6 * sizeof(float)
+                                                , (void*) (3 * sizeof(float))
+                                                });
+
         m_vaoCube.build();
 
         m_programMain.use();
@@ -89,6 +96,8 @@ public:
         m_programMain.setProjectionMatrix(unityMatrix);
         m_programMain.setUniform("lightColor", {1.0F, 0.5F, 0.31F});
         m_programMain.setUniform("objectColor", {1.0F, 1.0F, 1.0F});
+        m_programMain.setUniform("lightPos", m_lightPosition);
+        if(m_camera) m_programMain.setUniform("viewPos", m_camera->getParams().position);
 
         m_programLight.use();
         auto lightTransform = glm::translate(unityMatrix, m_lightPosition);
@@ -108,6 +117,8 @@ public:
         if(m_camera)
         {
             m_programMain.use();
+            m_programMain.setUniform("viewPos", m_camera->getParams().position);
+
             m_programMain.setViewMatrix(m_camera->getViewMatrix());
             m_programMain.setProjectionMatrix(m_camera->getProjectionMatrix());
 
@@ -146,7 +157,7 @@ int main()
     window.enableMouseHandling();
 
     auto camera = std::make_shared<Camera>();
-    camera->setPosition({0.0F, 0.0F, 3.0F});
+    camera->setPosition({0.0F, 1.0F, 10.0F});
     camera->setFront({0.0F, 0.0F, -1.0F});
     camera->setFov(45.0F);
     camera->setAspectRatio(800.0F / 600.0F);
