@@ -135,33 +135,71 @@ void Program::addShader(const std::string &path)
     s.path = path;
 }
 
-void Program::build()
+void Program::linkProgram()
 {
-    loadShaders();
-
     m_glId = glCreateProgram();
     for(const auto& s: m_shaders)
     {
         if(s.glId == 0) continue;
         glAttachShader(m_glId, s.glId);
     }
-    glLinkProgram(m_glId);
 
+    glLinkProgram(m_glId);
+    if(!getLinkStatusGlWrapper(*this))
+    {
+        logError(__FUNCTION__, getInfoLog(*this));
+    }
+}
+
+void Program::cleanupShaders()
+{
     for(auto& s: m_shaders)
     {
         if(s.glId == 0) continue;
         glDeleteShader(s.glId);
         s.glId = 0;
     }
+}
 
-    static const GLchar modelName[] = "model";
-    m_modelLocation = glGetUniformLocation(m_glId, modelName);
-    static const GLchar viewName[] = "view";
-    m_viewLocation = glGetUniformLocation(m_glId, viewName);
-    static const GLchar projectionName[] = "projection";
-    m_projectionLocation = glGetUniformLocation(m_glId, projectionName);
-    static const GLchar normalMatrixName[] = "normalMatrix";
-    m_normalMatrixLocation = glGetUniformLocation(m_glId, normalMatrixName);
+void Program::initTransformMatrices()
+{
+    m_modelLocation = glGetUniformLocation(m_glId, "model");
+    m_viewLocation = glGetUniformLocation(m_glId, "view");
+    m_projectionLocation = glGetUniformLocation(m_glId, "projection");
+    m_normalMatrixLocation = glGetUniformLocation(m_glId, "normalMatrix");
+}
+
+bool Program::getCompileStatusGlWrapper(const Shader &s) const
+{
+    int success = 0;
+    glGetShaderiv(s.glId, GL_COMPILE_STATUS, &success);
+    return success != 0;
+}
+
+bool Program::getLinkStatusGlWrapper(const Program &p) const
+{
+    int success = 0;
+    glGetProgramiv(p.m_glId, GL_LINK_STATUS, &success);
+    return success != 0;
+}
+
+void Program::getInfoLogGlWrapper(const Shader &s, const int maxLen, int& len, char* buffer) const
+{
+    glGetShaderInfoLog(s.glId, maxLen, &len, buffer);
+}
+
+void Program::getInfoLogGlWrapper(const Program &p, const int maxLen, int& len, char* buffer) const
+{
+    glGetProgramInfoLog(p.m_glId, maxLen, &len, buffer);
+}
+
+void Program::build()
+{
+    buildShaders();
+    linkProgram();
+    cleanupShaders();
+
+    initTransformMatrices();
 }
 
 void Program::use()
@@ -214,7 +252,7 @@ void Program::setUniformGlWrapper(int location, const glm::vec3 &v) const
     glUniform3f(location, v[0], v[1], v[2]);
 }
 
-void Program::loadShaders()
+void Program::buildShaders()
 {
     for(auto& s: m_shaders)
     {
@@ -235,6 +273,11 @@ void Program::loadShaders()
             const char* shaderSourceCStr = shaderSource.c_str();
             glShaderSource(s.glId, 1, &shaderSourceCStr, nullptr);
             glCompileShader(s.glId);
+
+            if(!getCompileStatusGlWrapper(s))
+            {
+                logError(s.path, getInfoLog(s));
+            }
         }
         else
         {

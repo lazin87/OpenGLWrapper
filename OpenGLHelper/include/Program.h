@@ -59,7 +59,15 @@ public:
     unsigned int getId() const noexcept;
 
 private:
-    void loadShaders();
+    void buildShaders();
+    void linkProgram();
+    void cleanupShaders();
+    void initTransformMatrices();
+
+    bool getCompileStatusGlWrapper(const Shader& s) const;
+    bool getLinkStatusGlWrapper(const Program &p) const;
+    void getInfoLogGlWrapper(const Shader& s, const int maxLen, int& len, char* buffer) const;
+    void getInfoLogGlWrapper(const Program& p, const int maxLen, int& len, char* buffer) const;
 
     int getUniformLocation(const std::string& name);
 
@@ -71,6 +79,9 @@ private:
     void setUniformImpl(const std::string& name, const T& value);
     template<typename T>
     void setUniformImpl(const int location, const T& value);
+
+    template<typename T>
+    std::string getInfoLog(const T& obj);
 
     unsigned int m_glId {0};
 
@@ -96,6 +107,19 @@ void Program::setUniformImpl(const int location, const T& value)
 {
     if(location == INVALID_LOCATION) return;
     setUniformGlWrapper(location, value);
+}
+
+template<typename T>
+std::string Program::getInfoLog(const T& obj)
+{
+    constexpr int maxLen = 512;
+    char errorMsg[maxLen];
+
+    int msgLen = 0;
+    getInfoLogGlWrapper(obj, maxLen, msgLen, errorMsg);
+    const std::string endChar = (msgLen == (maxLen - 1)) ? "..." : "";
+
+    return errorMsg + endChar;
 }
 
 } // namespace GL
