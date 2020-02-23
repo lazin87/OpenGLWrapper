@@ -207,6 +207,11 @@ void Program::use()
     glUseProgram(m_glId);
 }
 
+void Program::setUniform(const std::string &name, const int value)
+{
+    setUniformImpl(name, value);
+}
+
 void Program::setUniform(const std::string &name, const float value)
 {
     setUniformImpl(name, value);
@@ -240,6 +245,12 @@ void Program::setNormalMatrix(const glm::mat3 &m)
 unsigned int Program::getId() const noexcept
 {
     return m_glId;
+}
+
+
+void Program::setUniformGlWrapper(int location, const int v) const
+{
+    glUniform1i(location, v);
 }
 
 void Program::setUniformGlWrapper(int location, const float v) const

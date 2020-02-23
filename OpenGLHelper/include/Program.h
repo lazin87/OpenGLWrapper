@@ -49,6 +49,7 @@ public:
     void build();
     void use();
 
+    void setUniform(const std::string& name, int value);
     void setUniform(const std::string& name, float value);
     void setUniform(const std::string& name, const glm::vec3 &value);
 
@@ -72,6 +73,7 @@ private:
 
     int getUniformLocation(const std::string& name);
 
+    void setUniformGlWrapper(int location, const int v) const;
     void setUniformGlWrapper(int location, const float v) const;
     void setUniformGlWrapper(int location, const glm::mat3& m) const;
     void setUniformGlWrapper(int location, const glm::mat4& m) const;
