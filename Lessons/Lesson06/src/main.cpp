@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <GLFW/glfw3.h>
+
 #include <vector>
 
 using namespace RL::GL;
@@ -73,6 +75,10 @@ public:
         m_programLight.addShader("resources/fs_light.frag");
         m_programLight.build();
 
+        m_programMaterial.addShader("resources/vs.vert");
+        m_programMaterial.addShader("resources/fs_material.frag");
+        m_programMaterial.build();
+
         m_vaoCube.setVericesData(cube_vertices);
         m_vaoCube.setVertexAttribPointersConfig({ 0
                                                 , GLSLType::vec3
@@ -89,15 +95,32 @@ public:
 
         m_vaoCube.build();
 
-        m_programMain.use();
         const auto unityMatrix = glm::mat4{1.0F};
+        m_programMain.use();
         m_programMain.setModelMatrix(m_objectModelMatrix);
         m_programMain.setViewMatrix(unityMatrix);
         m_programMain.setProjectionMatrix(unityMatrix);
         m_programMain.setNormalMatrix(unityMatrix);
-        m_programMain.setUniform("lightColor", {1.0F, 0.5F, 0.31F});
         m_programMain.setUniform("objectColor", {1.0F, 1.0F, 1.0F});
+        m_programMain.setUniform("lightColor", {1.0F, 0.5F, 0.31F});
         m_programMain.setUniform("lightPos", m_lightPosition);
+
+        m_programMaterial.use();
+        auto materialObjTransform = glm::translate(unityMatrix, {1.2F, 0.0F, 2.0F});
+        m_programMaterial.setModelMatrix(materialObjTransform);
+        m_programMaterial.setViewMatrix(unityMatrix);
+        m_programMaterial.setProjectionMatrix(unityMatrix);
+        m_programMaterial.setNormalMatrix(unityMatrix);
+        m_programMaterial.setUniform("material.ambient", {1.0F, 0.5F, 0.31F});
+        m_programMaterial.setUniform("material.diffuse", {1.0F, 0.5F, 0.31F});
+        m_programMaterial.setUniform("material.specular", {0.5F, 0.5F, 0.5F});
+        m_programMaterial.setUniform("material.shininess", 32.0F);
+        m_programMaterial.setUniform("light.ambient", {0.2F, 0.2F, 0.2F});
+        m_programMaterial.setUniform("light.diffuse", {0.5F, 0.5F, 0.5F});
+        m_programMaterial.setUniform("light.specular", {1.0F, 1.0F, 1.0F});
+        m_programMaterial.setUniform("light.position", m_lightPosition);
+
+
 
         m_programLight.use();
         auto lightTransform = glm::translate(unityMatrix, m_lightPosition);
@@ -109,30 +132,49 @@ public:
 
     void render() override
     {
+        if(!m_camera) return;
+
         glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         m_vaoCube.use();
 
-        if(m_camera)
-        {
-            m_programMain.use();
+        const auto viewMatrix = m_camera->getViewMatrix();
+        const auto normalMatrix = glm::mat3 (
+                    glm::transpose( glm::inverse(viewMatrix * m_objectModelMatrix) )
+                    );
+        const auto projMatrix = m_camera->getProjectionMatrix();
 
-            const auto viewMatrix = m_camera->getViewMatrix();
-            m_programMain.setViewMatrix(viewMatrix);
-            m_programMain.setProjectionMatrix(m_camera->getProjectionMatrix());
-
-            const auto normalMatrix = glm::mat3 (
-                        glm::transpose( glm::inverse(viewMatrix * m_objectModelMatrix) )
-                        );
-            m_programMain.setNormalMatrix(normalMatrix);
-
-            m_programLight.use();
-            m_programLight.setViewMatrix(m_camera->getViewMatrix());
-            m_programLight.setProjectionMatrix(m_camera->getProjectionMatrix());
-        }
+        const auto time = static_cast<float>(glfwGetTime());
+        const glm::vec3 lightColor { sin(time * 2.0F)
+                                   , sin(time * 0.7F)
+                                   , sin(time * 1.3F)
+                                   };
+        const auto ambientColor = lightColor * glm::vec3(0.2F);
+        const auto diffuseColor = lightColor * glm::vec3(0.5F);
 
         m_programMain.use();
+        m_programMain.setViewMatrix(viewMatrix);
+        m_programMain.setProjectionMatrix(projMatrix);
+        m_programMain.setNormalMatrix(normalMatrix);
+        m_programMain.setUniform("lightColor", lightColor);
+
+        m_programMaterial.use();
+        m_programMaterial.setViewMatrix(viewMatrix);
+        m_programMaterial.setProjectionMatrix(projMatrix);
+        m_programMaterial.setNormalMatrix(normalMatrix);
+        m_programMaterial.setUniform("light.ambient", ambientColor);
+        m_programMaterial.setUniform("light.diffuse", diffuseColor);
+
+        m_programLight.use();
+        m_programLight.setViewMatrix(m_camera->getViewMatrix());
+        m_programLight.setProjectionMatrix(m_camera->getProjectionMatrix());
+
+
+        m_programMain.use();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        m_programMaterial.use();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         m_programLight.use();
@@ -151,6 +193,8 @@ private:
 
     Program m_programMain;
     Program m_programLight;
+    Program m_programMaterial;
+
     VertexArrayObject m_vaoCube;
     std::shared_ptr<Camera> m_camera;
 

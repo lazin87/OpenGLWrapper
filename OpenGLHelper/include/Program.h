@@ -49,7 +49,8 @@ public:
     void build();
     void use();
 
-    void setUniform(const std::string& name, glm::vec3 value);
+    void setUniform(const std::string& name, float value);
+    void setUniform(const std::string& name, const glm::vec3 &value);
 
     void setModelMatrix(const glm::mat4& m);
     void setViewMatrix(const glm::mat4& m);
@@ -57,7 +58,7 @@ public:
     void setNormalMatrix(const glm::mat3& m);
 
     unsigned int getId() const noexcept;
-
+    
 private:
     void buildShaders();
     void linkProgram();
@@ -71,6 +72,7 @@ private:
 
     int getUniformLocation(const std::string& name);
 
+    void setUniformGlWrapper(int location, const float v) const;
     void setUniformGlWrapper(int location, const glm::mat3& m) const;
     void setUniformGlWrapper(int location, const glm::mat4& m) const;
     void setUniformGlWrapper(int location, const glm::vec3& v) const;
@@ -93,6 +95,7 @@ private:
 
     std::array<Shader, static_cast<size_t>(ShaderType::COUNT)> m_shaders;
     std::unordered_map<std::string, int> m_uniformsLocation{};
+
 };
 
 template<typename T>

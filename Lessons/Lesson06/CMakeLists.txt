@@ -19,6 +19,7 @@ add_custom_target(ResourcesL06
     SOURCES
     src/resources/fs.frag
     src/resources/fs_light.frag
+    src/resources/fs_material.frag
     src/resources/vs.vert
     )
 file(REMOVE_RECURSE
