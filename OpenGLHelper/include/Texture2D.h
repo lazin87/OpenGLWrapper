@@ -25,6 +25,7 @@ public:
     ~Texture2D();
 
     void load(const std::string &path);
+    void use(const int index);
     unsigned int getId() const noexcept;
 
 private:

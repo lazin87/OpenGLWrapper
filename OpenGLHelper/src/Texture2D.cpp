@@ -57,6 +57,27 @@ ImageFileFormat getImageFileFormat(const std::string &path)
     }
 }
 
+GLenum toGLTexture(const int idx)
+{
+    switch(idx)
+    {
+    case 0:
+        return GL_TEXTURE0;
+    case 1:
+        return GL_TEXTURE1;
+    case 2:
+        return GL_TEXTURE2;
+    case 3:
+        return GL_TEXTURE3;
+    case 4:
+        return GL_TEXTURE4;
+    case 5:
+        return GL_TEXTURE5;
+
+    default:
+        return GL_INVALID_ENUM;
+    }
+};
 Texture2D::~Texture2D()
 {
     glDeleteTextures(1, &m_glId);
@@ -87,6 +108,12 @@ void Texture2D::load(const std::string &path)
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(imageData);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture2D::use(const int index)
+{
+    glActiveTexture(toGLTexture(index));
+    glBindTexture(GL_TEXTURE_2D, m_glId);
 }
 
 unsigned int Texture2D::getId() const noexcept
