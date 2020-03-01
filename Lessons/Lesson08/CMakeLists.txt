@@ -18,9 +18,7 @@ target_compile_features(Lesson08
 add_custom_target(ResourcesL08
     SOURCES
     src/resources/fs_light.frag
-    src/resources/fs_light_directional.frag
-    src/resources/fs_light_pointlight.frag
-    src/resources/fs_light_spotlight.frag
+    src/resources/fs_light_mixed.frag
     src/resources/vs.vert
     src/resources/container2.png
     src/resources/container2_specular.png

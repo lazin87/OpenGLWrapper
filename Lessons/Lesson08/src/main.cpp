@@ -76,17 +76,9 @@ public:
         m_programLight.addShader("resources/fs_light.frag");
         m_programLight.build();
 
-        m_programDirectional.addShader("resources/vs.vert");
-        m_programDirectional.addShader("resources/fs_light_directional.frag");
-        m_programDirectional.build();
-
-        m_programPointlight.addShader("resources/vs.vert");
-        m_programPointlight.addShader("resources/fs_light_pointlight.frag");
-        m_programPointlight.build();
-
-        m_programSpotlight.addShader("resources/vs.vert");
-        m_programSpotlight.addShader("resources/fs_light_spotlight.frag");
-        m_programSpotlight.build();
+        m_programMixedLight.addShader("resources/vs.vert");
+        m_programMixedLight.addShader("resources/fs_light_mixed.frag");
+        m_programMixedLight.build();
 
         m_vaoCube.setVericesData(cube_vertices);
         m_vaoCube.setVertexAttribPointersConfig({ 0
@@ -113,47 +105,52 @@ public:
         const auto unityMatrix = glm::mat4{1.0F};
         auto materialObjTransform = glm::translate(unityMatrix, {1.2F, 0.0F, 2.0F});
 
-        m_programDirectional.use();
-        m_programDirectional.setModelMatrix(materialObjTransform);
-        m_programDirectional.setViewMatrix(unityMatrix);
-        m_programDirectional.setProjectionMatrix(unityMatrix);
-        m_programDirectional.setNormalMatrix(unityMatrix);
-        m_programDirectional.setUniform("material.shininess", 32.0F);
-        m_programDirectional.setUniform("light.diffuse", {0.5F, 0.5F, 0.5F});
-        m_programDirectional.setUniform("light.specular", {1.0F, 1.0F, 1.0F});
-        m_programDirectional.setUniform("light.direction", m_sunDirection);
-
-        m_programPointlight.use();
-        m_programPointlight.setModelMatrix(materialObjTransform);
-        m_programPointlight.setViewMatrix(unityMatrix);
-        m_programPointlight.setProjectionMatrix(unityMatrix);
-        m_programPointlight.setNormalMatrix(unityMatrix);
-        m_programPointlight.setUniform("material.diffuse", 0);
-        m_programPointlight.setUniform("material.specular", 1);
-        m_programPointlight.setUniform("material.shininess", 32.0F);
-        m_programPointlight.setUniform("light.ambient", glm::vec3(0.1F));
-        m_programPointlight.setUniform("light.diffuse", glm::vec3(1.0F));
-        m_programPointlight.setUniform("light.specular", {1.0F, 1.0F, 1.0F});
-        m_programPointlight.setUniform("light.position", m_lightPosition);
-        m_programPointlight.setUniform("light.Kc", 1.0F);
-        m_programPointlight.setUniform("light.Kl", 0.09F);
-        m_programPointlight.setUniform("light.Kq", 0.032F);
-
-        m_programSpotlight.use();
-        m_programSpotlight.setModelMatrix(materialObjTransform);
-        m_programSpotlight.setViewMatrix(unityMatrix);
-        m_programSpotlight.setProjectionMatrix(unityMatrix);
-        m_programSpotlight.setNormalMatrix(unityMatrix);
-        m_programSpotlight.setUniform("material.diffuse", 0);
-        m_programSpotlight.setUniform("material.specular", 1);
-        m_programSpotlight.setUniform("material.shininess", 32.0F);
-        m_programSpotlight.setUniform("light.ambient", glm::vec3(0.1F));
-        m_programSpotlight.setUniform("light.diffuse", glm::vec3(1.0F));
-        m_programSpotlight.setUniform("light.specular", {1.0F, 1.0F, 1.0F});
-        m_programSpotlight.setUniform("light.position", m_lightPosition);
-        m_programSpotlight.setUniform("light.direction", {0.0F, 0.0F, 1.0F});
-        m_programSpotlight.setUniform("light.cutOff", glm::cos(glm::radians(12.5F)));
-        m_programSpotlight.setUniform("light.outerCutOff", glm::cos(glm::radians(15.0F)));
+        m_programMixedLight.use();
+        m_programMixedLight.setModelMatrix(materialObjTransform);
+        m_programMixedLight.setViewMatrix(unityMatrix);
+        m_programMixedLight.setProjectionMatrix(unityMatrix);
+        m_programMixedLight.setNormalMatrix(unityMatrix);
+        m_programMixedLight.setUniform("material.diffuse", 0);
+        m_programMixedLight.setUniform("material.specular", 1);
+        m_programMixedLight.setUniform("material.shininess", 32.0F);
+        m_programMixedLight.setUniform("dirLight.ambient", glm::vec3(0.1F));
+        m_programMixedLight.setUniform("dirLight.diffuse", {0.5F, 0.5F, 0.5F});
+        m_programMixedLight.setUniform("dirLight.specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("dirLight.direction", m_sunDirection);
+        m_programMixedLight.setUniform("pointLight[0].ambient", glm::vec3(0.1F));
+        m_programMixedLight.setUniform("pointLight[0].diffuse", glm::vec3(1.0F));
+        m_programMixedLight.setUniform("pointLight[0].specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("pointLight[0].position", m_pointLightPositions[0]);
+        m_programMixedLight.setUniform("pointLight[0].Kc", 1.0F);
+        m_programMixedLight.setUniform("pointLight[0].Kl", 0.09F);
+        m_programMixedLight.setUniform("pointLight[0].Kq", 0.032F);
+        m_programMixedLight.setUniform("pointLight[1].ambient", glm::vec3(0.1F));
+        m_programMixedLight.setUniform("pointLight[1].diffuse", glm::vec3(1.0F));
+        m_programMixedLight.setUniform("pointLight[1].specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("pointLight[1].position", m_pointLightPositions[1]);
+        m_programMixedLight.setUniform("pointLight[1].Kc", 1.0F);
+        m_programMixedLight.setUniform("pointLight[1].Kl", 0.09F);
+        m_programMixedLight.setUniform("pointLight[1].Kq", 0.032F);
+        m_programMixedLight.setUniform("pointLight[2].ambient", glm::vec3(0.1F));
+        m_programMixedLight.setUniform("pointLight[2].diffuse", glm::vec3(1.0F));
+        m_programMixedLight.setUniform("pointLight[2].specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("pointLight[2].position", m_pointLightPositions[2]);
+        m_programMixedLight.setUniform("pointLight[2].Kc", 1.0F);
+        m_programMixedLight.setUniform("pointLight[2].Kl", 0.09F);
+        m_programMixedLight.setUniform("pointLight[2].Kq", 0.032F);
+        m_programMixedLight.setUniform("pointLight[3].ambient", glm::vec3(0.1F));
+        m_programMixedLight.setUniform("pointLight[3].diffuse", glm::vec3(1.0F));
+        m_programMixedLight.setUniform("pointLight[3].specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("pointLight[3].position", m_pointLightPositions[3]);
+        m_programMixedLight.setUniform("pointLight[3].Kc", 1.0F);
+        m_programMixedLight.setUniform("pointLight[3].Kl", 0.09F);
+        m_programMixedLight.setUniform("pointLight[3].Kq", 0.032F);
+        m_programMixedLight.setUniform("spotLight.diffuse", glm::vec3(1.0F));
+        m_programMixedLight.setUniform("spotLight.specular", {1.0F, 1.0F, 1.0F});
+        m_programMixedLight.setUniform("spotLight.position", m_lightPosition);
+        m_programMixedLight.setUniform("spotLight.direction", {0.0F, 0.0F, 1.0F});
+        m_programMixedLight.setUniform("spotLight.cutOff", glm::cos(glm::radians(12.5F)));
+        m_programMixedLight.setUniform("spotLight.outerCutOff", glm::cos(glm::radians(15.0F)));
 
         m_programLight.use();
         auto lightTransform = glm::translate(unityMatrix, m_lightPosition);
@@ -174,31 +171,20 @@ public:
 
         const auto viewMatrix = m_camera->getViewMatrix();
         const auto projMatrix = m_camera->getProjectionMatrix();
-        const auto lightPosition =  glm::vec3(viewMatrix * glm::vec4(m_lightPosition, 1.0F));
 
         m_diffuseMap.use(0);
         m_specularMap.use(1);
 
-//        m_programDirectional.use();
-//        m_programDirectional.setViewMatrix(viewMatrix);
-//        m_programDirectional.setProjectionMatrix(projMatrix);
-//        m_programDirectional.setUniform("material.diffuse", 0);
-//        m_programDirectional.setUniform("material.specular", 1);
-//        m_programDirectional.setUniform("light.ambient", glm::vec3(0.1F));
-//        m_programDirectional.setUniform("light.diffuse", glm::vec3(1.0F));
-
-//        m_programPointlight.use();
-//        m_programPointlight.setViewMatrix(viewMatrix);
-//        m_programPointlight.setProjectionMatrix(projMatrix);
-//        m_programPointlight.setUniform("light.position", lightPosition);
-
-
         const auto cameraParams = m_camera->getParams();
-        m_programSpotlight.use();
-        m_programSpotlight.setViewMatrix(viewMatrix);
-        m_programSpotlight.setProjectionMatrix(projMatrix);
-        m_programSpotlight.setUniform("light.position", cameraParams.position);
-        m_programSpotlight.setUniform("light.direction", cameraParams.front);
+        m_programMixedLight.use();
+        m_programMixedLight.setViewMatrix(viewMatrix);
+        m_programMixedLight.setProjectionMatrix(projMatrix);
+        m_programMixedLight.setUniform("pointLight[0].position", glm::vec3(viewMatrix * glm::vec4(m_pointLightPositions[0], 1.0F)));
+        m_programMixedLight.setUniform("pointLight[1].position", glm::vec3(viewMatrix * glm::vec4(m_pointLightPositions[1], 1.0F)));
+        m_programMixedLight.setUniform("pointLight[2].position", glm::vec3(viewMatrix * glm::vec4(m_pointLightPositions[2], 1.0F)));
+        m_programMixedLight.setUniform("pointLight[3].position", glm::vec3(viewMatrix * glm::vec4(m_pointLightPositions[3], 1.0F)));
+        m_programMixedLight.setUniform("spotLight.position", cameraParams.position);
+        m_programMixedLight.setUniform("spotLight.direction", cameraParams.front);
 
         int counter = 0;
         for(const auto& pos: m_cubesPos)
@@ -212,14 +198,8 @@ public:
                         glm::transpose( glm::inverse(viewMatrix * modelMat) )
                         );
 
-//            m_programDirectional.setModelMatrix(modelMat);
-//            m_programDirectional.setNormalMatrix(normalMatrix);
-
-//            m_programPointlight.setModelMatrix(modelMat);
-//            m_programPointlight.setNormalMatrix(normalMatrix);
-
-            m_programSpotlight.setModelMatrix(modelMat);
-            m_programSpotlight.setNormalMatrix(normalMatrix);
+            m_programMixedLight.setModelMatrix(modelMat);
+            m_programMixedLight.setNormalMatrix(normalMatrix);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -228,7 +208,15 @@ public:
         m_programLight.setViewMatrix(m_camera->getViewMatrix());
         m_programLight.setProjectionMatrix(m_camera->getProjectionMatrix());
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for(const auto position: m_pointLightPositions)
+        {
+            glm::mat4 modelMat = glm::mat4(1.0F);
+            modelMat = glm::translate(modelMat, position);
+            modelMat = glm::scale(modelMat, glm::vec3(0.2F));
+            m_programLight.setModelMatrix(modelMat);
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glBindVertexArray(0);
     }
@@ -255,9 +243,7 @@ private:
     glm::mat4 m_objectModelMatrix {1.0F};
 
     Program m_programLight;
-    Program m_programDirectional;
-    Program m_programPointlight;
-    Program m_programSpotlight;
+    Program m_programMixedLight;
 
     std::shared_ptr<Camera> m_camera;
 
@@ -268,6 +254,13 @@ private:
 
     glm::vec3 m_lightPosition {1.2F, 1.0F, 2.0F};
     glm::vec3 m_sunDirection {-0.2F, -1.0F, -0.3F};
+
+    std::array<glm::vec3, 4> m_pointLightPositions {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
 };
 
 int main()
