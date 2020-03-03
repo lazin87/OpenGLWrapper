@@ -8,6 +8,7 @@ add_library(OpenGLHelper
     src/FlyCameraControler.cpp
     src/Logger.cpp
     src/Program.cpp
+    src/SceneLoader.cpp
     src/Texture2D.cpp
     src/VertexArrayObject.cpp
     src/Utilities.cpp
