@@ -10,7 +10,11 @@ target_link_libraries(Lesson04
     PRIVATE
     Rafal::OpenGLHelper
     Glad::Glad
+    glfw3
     )
+target_compile_features(Lesson04
+    PRIVATE
+    cxx_std_17)
 
 add_custom_target(ResourcesL04
     SOURCES

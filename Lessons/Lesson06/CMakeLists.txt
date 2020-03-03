@@ -10,6 +10,7 @@ target_link_libraries(Lesson06
     PRIVATE
     Rafal::OpenGLHelper
     Glad::Glad
+    glfw3
     )
 target_compile_features(Lesson06
     PRIVATE
