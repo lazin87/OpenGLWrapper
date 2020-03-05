@@ -1,59 +1,38 @@
 #include "Texture2D.h"
 
+#include "ImageLoader.h"
 #include "Logger.h"
-#include "Utilities.h"
 
 #include <glad/glad.h>
-#include <stb_image.h>
-
-#include <map>
 
 namespace RL {
 
 namespace GL {
 
-int toGLPixelDataFormat(const ImageFileFormat format)
+namespace  {
+
+int toGLPixelDataFormat(const ImageType type)
 {
-    switch(format)
+    switch(type)
     {
-    case ImageFileFormat::PNG:
+    case ImageType::PNG:
         return GL_RGBA;
-    case ImageFileFormat::JPEG:
+    case ImageType::JPEG:
         return GL_RGB;
     default:
         return GL_INVALID_ENUM;
     }
 }
 
-int toGLPixelDataType(const ImageFileFormat format)
+int toGLPixelDataType(const ImageType type)
 {
-    switch(format)
+    switch(type)
     {
-    case ImageFileFormat::PNG:
-    case ImageFileFormat::JPEG:
+    case ImageType::PNG:
+    case ImageType::JPEG:
         return GL_UNSIGNED_BYTE;
     default:
         return GL_INVALID_ENUM;
-    }
-}
-
-ImageFileFormat getImageFileFormat(const std::string &path)
-{
-    static const std::map<std::string, ImageFileFormat> stringToImageFormat{
-          {"png", ImageFileFormat::PNG}
-        , {"jpg", ImageFileFormat::JPEG}
-        , {"jpeg", ImageFileFormat::JPEG}
-    };
-
-    auto imageFormatItr = stringToImageFormat.find(getFileExtension(path));
-    if(imageFormatItr == std::cend(stringToImageFormat))
-    {
-        logError(__FUNCTION__, "Can not determine the image file format or it is not supported: " + path);
-        return ImageFileFormat::INVALID;
-    }
-    else
-    {
-        return imageFormatItr->second;
     }
 }
 
@@ -78,22 +57,20 @@ GLenum toGLTexture(const int idx)
         return GL_INVALID_ENUM;
     }
 };
-Texture2D::~Texture2D()
+
+} // namespace
+
+Texture2D::Texture2D(Texture2D &&other)
+    : Texture2D()
 {
-    glDeleteTextures(1, &m_glId);
+    *this = std::move(other);
 }
 
-void Texture2D::load(const std::string &path)
+Texture2D::Texture2D(const Image &image)
+    : m_width {image.width}
+    , m_height {image.height}
+    , m_channelsNbr {image.channelsNbr}
 {
-    m_path = path;
-    const auto imageFormat = getImageFileFormat(m_path);
-    auto *imageData = stbi_load(m_path.c_str(), &m_width, &m_height, &m_channelsNbr, 0);
-    if((imageData == nullptr) || (imageFormat == ImageFileFormat::INVALID))
-    {
-        logError(__FUNCTION__, "Can not load texture: " + m_path);
-        return;
-    }
-
     glGenTextures(1, &m_glId);
     glBindTexture(GL_TEXTURE_2D, m_glId);
     glTexImage2D( GL_TEXTURE_2D
@@ -102,12 +79,22 @@ void Texture2D::load(const std::string &path)
                 , m_width
                 , m_height
                 , 0
-                , toGLPixelDataFormat(imageFormat)
-                , toGLPixelDataType(imageFormat)
-                , imageData);
+                , toGLPixelDataFormat(image.type)
+                , toGLPixelDataType(image.type)
+                , image.data);
     glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(imageData);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Texture2D &Texture2D::operator=(Texture2D && other)
+{
+    swap(*this, other);
+    return *this;
+}
+
+Texture2D::~Texture2D()
+{
+    glDeleteTextures(1, &m_glId);
 }
 
 void Texture2D::use(const int index)
@@ -119,6 +106,25 @@ void Texture2D::use(const int index)
 unsigned int Texture2D::getId() const noexcept
 {
     return m_glId;
+}
+
+Texture2D loadTexture2D(const std::string &path)
+{
+    ImageLoader l;
+    const auto image = l.load(path);
+    if(!image) return Texture2D{};
+
+    return Texture2D{image.value()};
+}
+
+void swap(Texture2D &first, Texture2D &second) noexcept
+{
+    using std::swap;
+
+    swap(first.m_glId, second.m_glId);
+    swap(first.m_width, second.m_width);
+    swap(first.m_height, second.m_height);
+    swap(first.m_channelsNbr, second.m_channelsNbr);
 }
 
 } // namespace GL
