@@ -68,8 +68,8 @@ public:
     {
         glEnable(GL_DEPTH_TEST);
 
-        m_diffuseMap.load("resources/container2.png");
-        m_specularMap.load("resources/container2_specular.png");
+        m_diffuseMap = loadTexture2D("resources/container2.png");
+        m_specularMap = loadTexture2D("resources/container2_specular.png");
 
         m_programMain.addShader("resources/vs.vert");
         m_programMain.addShader("resources/fs.frag");

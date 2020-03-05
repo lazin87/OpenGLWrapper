@@ -36,8 +36,8 @@ public:
         m_vao.setVertexAttribPointersConfig({2, GLSLType::vec2, false, 8 * sizeof(float), (void* )(6 * sizeof(float))});
         m_vao.build();
 
-        m_texture1.load("resources/container.jpg");
-        m_texture2.load("resources/awesomeface.png");
+        m_texture1 = loadTexture2D("resources/container.jpg");
+        m_texture2 = loadTexture2D("resources/awesomeface.png");
     }
 
     void render() override

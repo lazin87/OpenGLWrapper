@@ -106,8 +106,8 @@ public:
         m_vaoCube.setVertexAttribPointersConfig({2, GLSLType::vec2, false, 5*sizeof(float), (void*) (3 * sizeof(float))});
         m_vaoCube.build();
 
-        m_texture1.load("resources/container.jpg");
-        m_texture2.load("resources/awesomeface.png");
+        m_texture1 = loadTexture2D("resources/container.jpg");
+        m_texture2 = loadTexture2D("resources/awesomeface.png");
 
         m_modelMatrixLocation = glGetUniformLocation(m_program.getId(), "modelMatrix");
         m_viewMatrixLocation = glGetUniformLocation(m_program.getId(), "viewMatrix");
