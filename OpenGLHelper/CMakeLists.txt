@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.11)
 project(OpenGLHelper VERSION 1.0.0 LANGUAGES CXX)
 
 find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
 
 add_library(OpenGLHelper
     src/Camera.cpp
@@ -28,7 +29,7 @@ target_link_libraries(OpenGLHelper
     PRIVATE
     Glad::Glad
     Stb::Image
-    glfw3
+    glfw
     GL)
 add_library(Rafal::OpenGLHelper ALIAS OpenGLHelper)
 

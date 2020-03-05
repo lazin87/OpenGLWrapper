@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 project(Lesson07 VERSION 1.0.0 LANGUAGES CXX)
 
-find_package(GLM REQUIRED)
+find_package(glm REQUIRED)
 
 add_executable(Lesson07
     src/main.cpp
