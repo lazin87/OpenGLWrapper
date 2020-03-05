@@ -28,8 +28,8 @@ class VertexArrayObject
 public:
     VertexArrayObject(const VertexArrayObject&) = delete;
     VertexArrayObject& operator=(const VertexArrayObject&) = delete;
-    VertexArrayObject(VertexArrayObject&&) = delete;
-    VertexArrayObject& operator=(VertexArrayObject&&) = delete;
+    VertexArrayObject(VertexArrayObject&& other);
+    VertexArrayObject& operator=(VertexArrayObject&& other);
 
     VertexArrayObject() = default;
     ~VertexArrayObject();
@@ -41,6 +41,9 @@ public:
     void build();
     void use();
     unsigned int getId() const noexcept;
+    size_t getIndicesCount() const;
+
+    friend void swap(VertexArrayObject& first, VertexArrayObject& second) noexcept;
 
 private:
     unsigned int m_vaoGlId{0};
@@ -50,6 +53,9 @@ private:
     std::vector<unsigned int> m_indices;
     std::vector<VertexAttribPointerConfig> m_vertexAttribPointersConfig;
 };
+
+void swap(VertexArrayObject& first, VertexArrayObject& second) noexcept;
+void swap(VertexAttribPointerConfig& first, VertexAttribPointerConfig& second) noexcept;
 
 } // namespace GL
 

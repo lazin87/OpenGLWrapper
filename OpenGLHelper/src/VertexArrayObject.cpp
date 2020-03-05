@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include <utility>
+
 namespace RL {
 
 namespace GL {
@@ -41,6 +43,17 @@ GLenum getElementType(const GLSLType t)
 }
 
 } // namespace Detail
+
+VertexArrayObject::VertexArrayObject(VertexArrayObject &&other)
+{
+    *this = std::move(other);
+}
+
+VertexArrayObject& VertexArrayObject::operator=(VertexArrayObject &&other)
+{
+    swap(*this, other);
+    return *this;
+}
 
 VertexArrayObject::~VertexArrayObject()
 {
@@ -108,6 +121,34 @@ void VertexArrayObject::use()
 unsigned int VertexArrayObject::getId() const noexcept
 {
     return m_vaoGlId;
+}
+
+size_t VertexArrayObject::getIndicesCount() const
+{
+    return m_indices.size();
+}
+
+void swap(VertexArrayObject &first, VertexArrayObject &second) noexcept
+{
+    using std::swap;
+
+    swap(first.m_vaoGlId, second.m_vaoGlId);
+    swap(first.m_vboGlId, second.m_vboGlId);
+    swap(first.m_eboGlId, second.m_eboGlId);
+    swap(first.m_verticesData, second.m_verticesData);
+    swap(first.m_indices, second.m_indices);
+    swap(first.m_vertexAttribPointersConfig, second.m_vertexAttribPointersConfig);
+}
+
+void swap(VertexAttribPointerConfig &first, VertexAttribPointerConfig &second) noexcept
+{
+    using std::swap;
+
+    swap(first.index, second.index);
+    swap(first.type, second.type);
+    swap(first.hasToNormalize, second.hasToNormalize);
+    swap(first.stride, second.stride);
+    swap(first.offset, second.offset);
 }
 
 } // namespace GL

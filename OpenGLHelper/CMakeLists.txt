@@ -32,7 +32,9 @@ target_link_libraries(OpenGLHelper
     Glad::Glad
     Stb::Image
     glfw
-    GL)
+    GL
+    assimp)
+
 add_library(Rafal::OpenGLHelper ALIAS OpenGLHelper)
 
 file(GLOB_RECURSE HeaderFiles "*.h")

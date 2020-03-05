@@ -6,6 +6,8 @@
 #include "FlyCameraControler.h"
 #include "Texture2D.h"
 
+#include "SceneLoader.h"
+
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -202,6 +204,15 @@ public:
             m_programMixedLight.setNormalMatrix(normalMatrix);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            m_programMixedLight.use();
+            for(auto& vao: m_vaoModelMeshes)
+            {
+                vao.use();
+                glDrawElements(GL_TRIANGLES, vao.getIndicesCount(), GL_UNSIGNED_INT, 0);
+            }
+
+            m_vaoCube.use();
         }
 
         m_programLight.use();
@@ -219,6 +230,54 @@ public:
         }
 
         glBindVertexArray(0);
+
+    }
+
+    void draw(const std::vector<Mesh>& meshes)
+    {
+        for(const auto& mesh: meshes)
+        {
+            // SO BAD!!
+            std::vector<float> verticesData;
+            verticesData.reserve(8 * mesh.vertices.size());
+            for(const auto& v: mesh.vertices)
+            {
+                verticesData.push_back(v.position.x);
+                verticesData.push_back(v.position.y);
+                verticesData.push_back(v.position.z);
+                verticesData.push_back(v.normal.x);
+                verticesData.push_back(v.normal.y);
+                verticesData.push_back(v.normal.z);
+                verticesData.push_back(v.texCoords.x);
+                verticesData.push_back(v.texCoords.y);
+            }
+
+
+            VertexArrayObject vao;
+            vao.setVericesData(verticesData);
+            vao.setIndices(mesh.indices);
+            vao.setVertexAttribPointersConfig({ 0
+                                              , GLSLType::vec3
+                                              , false
+                                              , 8 * sizeof(float)
+                                              , (void*) 0
+                                              });
+            vao.setVertexAttribPointersConfig({ 1
+                                              , GLSLType::vec3
+                                              , false
+                                              , 8 * sizeof(float)
+                                              , (void*) (3 * sizeof(float))
+                                              });
+            vao.setVertexAttribPointersConfig({ 2
+                                              , GLSLType::vec2
+                                              , false
+                                              , 8 * sizeof(float)
+                                              , (void*) (6 * sizeof(float))
+                                              });
+            vao.build();
+
+            m_vaoModelMeshes.push_back(std::move(vao));
+        }
     }
 
     void set(std::shared_ptr<Camera> c)
@@ -251,6 +310,8 @@ private:
     Texture2D m_diffuseMap;
     Texture2D m_specularMap;
 
+    std::vector<VertexArrayObject> m_vaoModelMeshes;
+
 
     glm::vec3 m_lightPosition {1.2F, 1.0F, 2.0F};
     glm::vec3 m_sunDirection {-0.2F, -1.0F, -0.3F};
@@ -265,6 +326,9 @@ private:
 
 int main()
 {
+    SceneLoader loader;
+    loader.load("resources/nanosuit/nanosuit.obj");
+
     WindowContext window{ {3, 3, true} };
     window.createWindow( {"Lesson09", 800, 600, 0, 0} );
     window.enableMouseHandling();
@@ -279,6 +343,7 @@ int main()
 
     auto renderer = std::make_shared<Lesson09>();
     renderer->set(camera);
+    renderer->draw(loader.getMeshes());
     window.set(renderer);
 
     auto inputControler = std::make_shared<FlyCameraControler>();
