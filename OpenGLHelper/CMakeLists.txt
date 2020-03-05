@@ -6,6 +6,7 @@ find_package(OpenGL REQUIRED)
 add_library(OpenGLHelper
     src/Camera.cpp
     src/FlyCameraControler.cpp
+    src/ImageLoader.cpp
     src/Logger.cpp
     src/Program.cpp
     src/SceneLoader.cpp

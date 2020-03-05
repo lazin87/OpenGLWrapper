@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "Utilities.h"
 
-#include <glad/glad.h>
 #include <stb_image.h>
 
 #include <map>
