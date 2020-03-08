@@ -2,10 +2,10 @@
 #include "WindowContext.h"
 #include "IRenderer.h"
 #include "Program.h"
-#include "VertexArrayObject.h"
 #include "FlyCameraControler.h"
 #include "Texture2D.h"
 
+#include "Scene.h"
 #include "SceneLoader.h"
 
 #include <glad/glad.h>
@@ -15,7 +15,6 @@
 #include <GLFW/glfw3.h>
 
 #include <array>
-#include <vector>
 
 using namespace RL::GL;
 
@@ -23,52 +22,11 @@ class Lesson09: public IRenderer
 {
 
 public:
-    const std::vector<float> cube_vertices = {
-        -0.5F, -0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  0.0F,  0.0F,
-         0.5F, -0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  1.0F,  0.0F,
-         0.5F,  0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  1.0F,  1.0F,
-         0.5F,  0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  1.0F,  1.0F,
-        -0.5F,  0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  0.0F,  1.0F,
-        -0.5F, -0.5F, -0.5F,  0.0F,  0.0F, -1.0F,  0.0F,  0.0F,
-
-        -0.5F, -0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   0.0F, 0.0F,
-         0.5F, -0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   1.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   1.0F, 1.0F,
-         0.5F,  0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   1.0F, 1.0F,
-        -0.5F,  0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   0.0F, 1.0F,
-        -0.5F, -0.5F,  0.5F,  0.0F,  0.0F, 1.0F,   0.0F, 0.0F,
-
-        -0.5F,  0.5F,  0.5F, -1.0F,  0.0F,  0.0F,  1.0F, 0.0F,
-        -0.5F,  0.5F, -0.5F, -1.0F,  0.0F,  0.0F,  1.0F, 1.0F,
-        -0.5F, -0.5F, -0.5F, -1.0F,  0.0F,  0.0F,  0.0F, 1.0F,
-        -0.5F, -0.5F, -0.5F, -1.0F,  0.0F,  0.0F,  0.0F, 1.0F,
-        -0.5F, -0.5F,  0.5F, -1.0F,  0.0F,  0.0F,  0.0F, 0.0F,
-        -0.5F,  0.5F,  0.5F, -1.0F,  0.0F,  0.0F,  1.0F, 0.0F,
-
-         0.5F,  0.5F,  0.5F,  1.0F,  0.0F,  0.0F,  1.0F, 0.0F,
-         0.5F,  0.5F, -0.5F,  1.0F,  0.0F,  0.0F,  1.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  1.0F,  0.0F,  0.0F,  0.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  1.0F,  0.0F,  0.0F,  0.0F, 1.0F,
-         0.5F, -0.5F,  0.5F,  1.0F,  0.0F,  0.0F,  0.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  1.0F,  0.0F,  0.0F,  1.0F, 0.0F,
-
-        -0.5F, -0.5F, -0.5F,  0.0F, -1.0F,  0.0F,  0.0F, 1.0F,
-         0.5F, -0.5F, -0.5F,  0.0F, -1.0F,  0.0F,  1.0F, 1.0F,
-         0.5F, -0.5F,  0.5F,  0.0F, -1.0F,  0.0F,  1.0F, 0.0F,
-         0.5F, -0.5F,  0.5F,  0.0F, -1.0F,  0.0F,  1.0F, 0.0F,
-        -0.5F, -0.5F,  0.5F,  0.0F, -1.0F,  0.0F,  0.0F, 0.0F,
-        -0.5F, -0.5F, -0.5F,  0.0F, -1.0F,  0.0F,  0.0F, 1.0F,
-
-        -0.5F,  0.5F, -0.5F,  0.0F,  1.0F,  0.0F,  0.0F, 1.0F,
-         0.5F,  0.5F, -0.5F,  0.0F,  1.0F,  0.0F,  1.0F, 1.0F,
-         0.5F,  0.5F,  0.5F,  0.0F,  1.0F,  0.0F,  1.0F, 0.0F,
-         0.5F,  0.5F,  0.5F,  0.0F,  1.0F,  0.0F,  1.0F, 0.0F,
-        -0.5F,  0.5F,  0.5F,  0.0F,  1.0F,  0.0F,  0.0F, 0.0F,
-        -0.5F,  0.5F, -0.5F,  0.0F,  1.0F,  0.0F,  0.0F, 1.0F
-    };
-
     void init() override
     {
+        SceneLoader loader;
+        m_scene = loader.load("resources/nanosuit/nanosuit.obj");
+
         glEnable(GL_DEPTH_TEST);
 
         m_diffuseMap = loadTexture2D("resources/container2.png");
@@ -82,33 +40,12 @@ public:
         m_programMixedLight.addShader("resources/fs_light_mixed.frag");
         m_programMixedLight.build();
 
-        m_vaoCube.setVericesData(cube_vertices);
-        m_vaoCube.setVertexAttribPointersConfig({ 0
-                                                , GLSLType::vec3
-                                                , false
-                                                , 8 * sizeof(float)
-                                                , (void*) 0
-                                                });
-        m_vaoCube.setVertexAttribPointersConfig({ 1
-                                                , GLSLType::vec3
-                                                , false
-                                                , 8 * sizeof(float)
-                                                , (void*) (3 * sizeof(float))
-                                                });
-        m_vaoCube.setVertexAttribPointersConfig({ 2
-                                                , GLSLType::vec2
-                                                , false
-                                                , 8 * sizeof(float)
-                                                , (void*) (6 * sizeof(float))
-                                                });
-
-        m_vaoCube.build();
-
         const auto unityMatrix = glm::mat4{1.0F};
-        auto materialObjTransform = glm::translate(unityMatrix, {1.2F, 0.0F, 2.0F});
+        m_sceneModelMatrix = glm::translate(unityMatrix, {1.2F, 0.0F, 2.0F});
+        m_sceneModelMatrix = glm::scale(m_sceneModelMatrix, glm::vec3(0.2F));
 
         m_programMixedLight.use();
-        m_programMixedLight.setModelMatrix(materialObjTransform);
+        m_programMixedLight.setModelMatrix(m_sceneModelMatrix);
         m_programMixedLight.setViewMatrix(unityMatrix);
         m_programMixedLight.setProjectionMatrix(unityMatrix);
         m_programMixedLight.setNormalMatrix(unityMatrix);
@@ -169,8 +106,6 @@ public:
         glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        m_vaoCube.use();
-
         const auto viewMatrix = m_camera->getViewMatrix();
         const auto projMatrix = m_camera->getProjectionMatrix();
 
@@ -188,32 +123,13 @@ public:
         m_programMixedLight.setUniform("spotLight.position", cameraParams.position);
         m_programMixedLight.setUniform("spotLight.direction", cameraParams.front);
 
-        int counter = 0;
-        for(const auto& pos: m_cubesPos)
-        {
-            glm::mat4 modelMat = glm::mat4(1.0F);
-            modelMat = glm::translate(modelMat, pos);
-            const float angle = 20.0F * static_cast<float>(counter++);
-            modelMat = glm::rotate(modelMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        const auto normalMatrix = glm::mat3 (
+                    glm::transpose( glm::inverse(viewMatrix * m_sceneModelMatrix) )
+                    );
+        m_programMixedLight.setModelMatrix(m_sceneModelMatrix);
+        m_programMixedLight.setNormalMatrix(normalMatrix);
 
-            const auto normalMatrix = glm::mat3 (
-                        glm::transpose( glm::inverse(viewMatrix * modelMat) )
-                        );
-
-            m_programMixedLight.setModelMatrix(modelMat);
-            m_programMixedLight.setNormalMatrix(normalMatrix);
-
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-            m_programMixedLight.use();
-            for(auto& vao: m_vaoModelMeshes)
-            {
-                vao.use();
-                glDrawElements(GL_TRIANGLES, vao.getIndicesCount(), GL_UNSIGNED_INT, 0);
-            }
-
-            m_vaoCube.use();
-        }
+        m_scene.draw();
 
         m_programLight.use();
         m_programLight.setViewMatrix(m_camera->getViewMatrix());
@@ -233,85 +149,22 @@ public:
 
     }
 
-    void draw(const std::vector<Mesh>& meshes)
-    {
-        for(const auto& mesh: meshes)
-        {
-            // SO BAD!!
-            std::vector<float> verticesData;
-            verticesData.reserve(8 * mesh.vertices.size());
-            for(const auto& v: mesh.vertices)
-            {
-                verticesData.push_back(v.position.x);
-                verticesData.push_back(v.position.y);
-                verticesData.push_back(v.position.z);
-                verticesData.push_back(v.normal.x);
-                verticesData.push_back(v.normal.y);
-                verticesData.push_back(v.normal.z);
-                verticesData.push_back(v.texCoords.x);
-                verticesData.push_back(v.texCoords.y);
-            }
-
-
-            VertexArrayObject vao;
-            vao.setVericesData(verticesData);
-            vao.setIndices(mesh.indices);
-            vao.setVertexAttribPointersConfig({ 0
-                                              , GLSLType::vec3
-                                              , false
-                                              , 8 * sizeof(float)
-                                              , (void*) 0
-                                              });
-            vao.setVertexAttribPointersConfig({ 1
-                                              , GLSLType::vec3
-                                              , false
-                                              , 8 * sizeof(float)
-                                              , (void*) (3 * sizeof(float))
-                                              });
-            vao.setVertexAttribPointersConfig({ 2
-                                              , GLSLType::vec2
-                                              , false
-                                              , 8 * sizeof(float)
-                                              , (void*) (6 * sizeof(float))
-                                              });
-            vao.build();
-
-            m_vaoModelMeshes.push_back(std::move(vao));
-        }
-    }
-
     void set(std::shared_ptr<Camera> c)
     {
         m_camera = std::move(c);
     }
 
 private:
-    std::array<glm::vec3, 10> m_cubesPos {
-          glm::vec3( 0.0f,  0.0f,  0.0f),
-          glm::vec3( 2.0f,  5.0f, -15.0f),
-          glm::vec3(-1.5f, -2.2f, -2.5f),
-          glm::vec3(-3.8f, -2.0f, -12.3f),
-          glm::vec3( 2.4f, -0.4f, -3.5f),
-          glm::vec3(-1.7f,  3.0f, -7.5f),
-          glm::vec3( 1.3f, -2.0f, -2.5f),
-          glm::vec3( 1.5f,  2.0f, -2.5f),
-          glm::vec3( 1.5f,  0.2f, -1.5f),
-          glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
-    glm::mat4 m_objectModelMatrix {1.0F};
+    Scene m_scene;
+    glm::mat4 m_sceneModelMatrix {1.0F};
 
     Program m_programLight;
     Program m_programMixedLight;
 
     std::shared_ptr<Camera> m_camera;
 
-    VertexArrayObject m_vaoCube;
     Texture2D m_diffuseMap;
     Texture2D m_specularMap;
-
-    std::vector<VertexArrayObject> m_vaoModelMeshes;
-
 
     glm::vec3 m_lightPosition {1.2F, 1.0F, 2.0F};
     glm::vec3 m_sunDirection {-0.2F, -1.0F, -0.3F};
@@ -326,9 +179,6 @@ private:
 
 int main()
 {
-    SceneLoader loader;
-    loader.load("resources/nanosuit/nanosuit.obj");
-
     WindowContext window{ {3, 3, true} };
     window.createWindow( {"Lesson09", 800, 600, 0, 0} );
     window.enableMouseHandling();
@@ -343,7 +193,6 @@ int main()
 
     auto renderer = std::make_shared<Lesson09>();
     renderer->set(camera);
-    renderer->draw(loader.getMeshes());
     window.set(renderer);
 
     auto inputControler = std::make_shared<FlyCameraControler>();
