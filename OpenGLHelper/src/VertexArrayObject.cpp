@@ -1,5 +1,7 @@
 #include "VertexArrayObject.h"
 
+#include "Utilities.h"
+
 #include <glad/glad.h>
 
 #include <utility>
@@ -9,12 +11,6 @@ namespace RL {
 namespace GL {
 
 namespace Detail {
-
-template<typename T>
-size_t getDataSize(const std::vector<T>& v)
-{
-    return sizeof(T) * v.size();
-}
 
 size_t getElementsCount(const GLSLType t)
 {
@@ -83,14 +79,14 @@ void VertexArrayObject::build()
 
     glGenBuffers(1, &m_vboGlId);
     glBindBuffer(GL_ARRAY_BUFFER, m_vboGlId);
-    glBufferData(GL_ARRAY_BUFFER, Detail::getDataSize(m_verticesData), m_verticesData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, getDataSize(m_verticesData), m_verticesData.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     if(!m_indices.empty())
     {
         glGenBuffers(1, &m_eboGlId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_eboGlId);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Detail::getDataSize(m_indices), m_indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, getDataSize(m_indices), m_indices.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 

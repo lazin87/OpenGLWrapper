@@ -24,6 +24,11 @@ struct CallableObjectToFunction<RetType(ParamsType...), TagType>
     }
 };
 
+template<typename T>
+size_t getDataSize(const std::vector<T>& v)
+{
+    return sizeof(T) * v.size();
+}
 
 std::string getFileExtension(const std::string& path);
 
