@@ -10,7 +10,7 @@ namespace RL {
 
 namespace GL {
 
-bool SceneLoader::load(const std::string &path)
+Scene SceneLoader::load(const std::string &path)
 {
     Assimp::Importer importer;
     auto scene = importer.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -18,18 +18,13 @@ bool SceneLoader::load(const std::string &path)
     if(isFailed)
     {
         logError(__FUNCTION__, path + ": " + importer.GetErrorString());
-        return false;
+        return Scene{};
     }
 
     m_dir = path.substr(0, path.find_last_of("/"));
     processNode(scene->mRootNode, scene);
 
-    return true;
-}
-
-const std::vector<Mesh> &SceneLoader::getMeshes() const
-{
-    return m_meshes;
+    return {Scene{m_meshes}};
 }
 
 void SceneLoader::processNode(const aiNode *node, const aiScene *scene)
@@ -46,9 +41,9 @@ void SceneLoader::processNode(const aiNode *node, const aiScene *scene)
     }
 }
 
-Mesh SceneLoader::processMesh(const aiMesh *mesh, const aiScene *scene)
+MeshData SceneLoader::processMesh(const aiMesh *mesh, const aiScene *scene)
 {
-    Mesh result;
+    MeshData result;
 
     const auto texCoords0 = mesh->mTextureCoords[0];
     for(unsigned int i = 0; i < mesh->mNumVertices; ++i)
@@ -90,10 +85,10 @@ std::vector<Texture> SceneLoader::loadTexture(const aiMaterial *material, Textur
         aiString textureName;
         material->GetTexture(aiTextureType, i, &textureName);
 
-        textures.push_back({ 0
-                           , type
-                           , textureName.C_Str()
-                           });
+//        textures.push_back({ 0
+//                           , type
+//                           , textureName.C_Str()
+//                           });
     }
 
     return textures;
