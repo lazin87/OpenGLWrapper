@@ -11,6 +11,7 @@ add_library(OpenGLHelper
     src/ImageLoader.cpp
     src/Logger.cpp
     src/Program.cpp
+    src/Scene.cpp
     src/SceneLoader.cpp
     src/Texture2D.cpp
     src/VertexArrayObject.cpp
