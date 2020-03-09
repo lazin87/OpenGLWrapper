@@ -1,8 +1,11 @@
 #version 330 core
 
 struct Material {
-    sampler2D diffuse;
-    sampler2D specular;
+    sampler2D diffuse1;
+    sampler2D diffuse2;
+    sampler2D diffuse3;
+    sampler2D specular1;
+    sampler2D specular2;
 
     float shininess;
 };
@@ -70,10 +73,21 @@ void main()
     FragColor = vec4(result,  1.0F);
 }
 
+vec3 getDiffuse()
+{
+    vec4 tmp = mix(texture(material.diffuse1, TexCoords), texture(material.diffuse2, TexCoords), 0.5F);
+    return vec3(mix(tmp, texture(material.diffuse3, TexCoords), 0.5F));
+}
+
+vec3 getSpecular()
+{
+    return vec3(mix(texture(material.specular1, TexCoords), texture(material.specular2, TexCoords), 0.5F));
+}
+
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 texDiffColor = vec3(texture(material.diffuse, TexCoords));
-    vec3 texSpecColor = vec3(texture(material.specular, TexCoords));
+    vec3 texDiffColor = getDiffuse();
+    vec3 texSpecColor = getSpecular();
     vec3 lightDir = normalize(light.direction);
 
     vec3 ambient = light.ambient * texDiffColor;
@@ -90,8 +104,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
-    vec3 texDiffColor = vec3(texture(material.diffuse, TexCoords));
-    vec3 texSpecColor = vec3(texture(material.specular, TexCoords));
+    vec3 texDiffColor = getDiffuse();
+    vec3 texSpecColor = getSpecular();
     vec3 lightDir = normalize(FragPos - light.position);
     float distance = length(light.position - fragPos);
     float attenuation = 1.0F / (light.Kc + light.Kl * distance + light.Kq * distance * distance);
@@ -110,8 +124,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
-    vec3 texDiffColor = vec3(texture(material.diffuse, TexCoords));
-    vec3 texSpecColor = vec3(texture(material.specular, TexCoords));
+    vec3 texDiffColor = getDiffuse();
+    vec3 texSpecColor = getSpecular();
     vec3 lightDir = normalize(light.position - fragPos);
     float theta = dot(normalize(-light.direction), lightDir);
     float epsilon = light.cutOff - light.outerCutOff;
