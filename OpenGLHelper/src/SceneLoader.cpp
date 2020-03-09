@@ -66,32 +66,28 @@ MeshData SceneLoader::processMesh(const aiMesh *mesh, const aiScene *scene)
         }
     }
 
-//    if(mesh->mMaterialIndex >= 0)
-//    {
-//        const auto* material = scene->mMaterials[mesh->mMaterialIndex];
-//    }
+    if(mesh->mMaterialIndex >= 0)
+    {
+        const auto* material = scene->mMaterials[mesh->mMaterialIndex];
+        loadTextures(result.textures, material, TextureType::Diffuse);
+        loadTextures(result.textures, material, TextureType::Specular);
+    }
+
     return result;
 }
 
-std::vector<Texture> SceneLoader::loadTexture(const aiMaterial *material, TextureType type)
+void SceneLoader::loadTextures(std::vector<Texture2D>& out, const aiMaterial *material, TextureType type)
 {
     const auto aiTextureType = (type == TextureType::Diffuse) ? aiTextureType_DIFFUSE : aiTextureType_SPECULAR;
     const auto texturesCount = material->GetTextureCount(aiTextureType);
 
-    std::vector<Texture> textures;
-    textures.reserve(texturesCount);
     for(unsigned int i = 0; i < texturesCount; ++i)
     {
         aiString textureName;
         material->GetTexture(aiTextureType, i, &textureName);
-
-//        textures.push_back({ 0
-//                           , type
-//                           , textureName.C_Str()
-//                           });
+        const auto texturePath = m_dir + "/" + textureName.C_Str();
+        out.push_back(loadTexture2D(texturePath, type));
     }
-
-    return textures;
 }
 
 } // namespace GL

@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+#include "Texture2D.h"
+
 #include <string>
 #include <vector>
 
@@ -30,7 +32,7 @@ public:
 private:
     void processNode(const aiNode *node, const aiScene* scene);
     MeshData processMesh(const aiMesh *mesh, const aiScene* scene);
-    std::vector<Texture> loadTexture(const aiMaterial* material, TextureType type);
+    void loadTextures(std::vector<Texture2D> &out, const aiMaterial* material, TextureType type);
 
     std::vector<MeshData> m_meshes;
 
