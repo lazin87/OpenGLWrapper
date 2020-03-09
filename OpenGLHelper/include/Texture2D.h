@@ -1,19 +1,13 @@
 #pragma once
 
 #include "Image.h"
+#include "TextureType.h"
 
 #include <string>
 
 namespace RL {
 
 namespace GL {
-
-enum class TextureType: int
-{
-    Common,
-    Diffuse,
-    Specular
-};
 
 class Texture2D
 {

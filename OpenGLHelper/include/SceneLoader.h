@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "Texture2D.h"
+#include "TextureType.h"
 
 #include <string>
 #include <vector>
