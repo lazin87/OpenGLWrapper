@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "Utilities.h"
+#include "Program.h"
 
 #include <glad/glad.h>
 
@@ -29,28 +30,45 @@ Scene::~Scene()
     }
 }
 
-Scene::Scene(const std::vector<MeshData>& meshes)
+Scene::Scene(std::vector<MeshData>& meshes)
 {
-    for(const auto& m: meshes)
+    for(auto& m: meshes)
     {
         addMesh(m);
     }
 }
 
-void Scene::draw()
+void Scene::draw(Program& p)
 {
+    p.use();
+
     for(const auto& m: m_meshes)
     {
+        unsigned int diffuseNbr = 1;
+        unsigned int specularNbr = 1;
+        const auto texturesCnt = static_cast<int>(m.textures.size());
+        for(int i = 0; i < texturesCnt; ++i)
+        {
+            const std::string textureName = (m.textures[i].getType() == TextureType::Specular) ?
+                        "material.specular" + std::to_string(specularNbr++)
+                      : "material.diffuse" + std::to_string(diffuseNbr++);
+            m.textures[i].use(i);
+            p.setUniform(textureName, i);
+        }
+        glActiveTexture(GL_TEXTURE0);
+
         glBindVertexArray(m.vao);
         glDrawElements(GL_TRIANGLES, m.indicesCount, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
 }
 
-void Scene::addMesh(const MeshData &meshData)
+void Scene::addMesh(MeshData &meshData)
 {
     Mesh m;
     m.indicesCount = meshData.indices.size();
+    m.textures = std::move(meshData.textures);
+
     glGenVertexArrays(1, &m.vao);
     glGenBuffers(1, &m.vbo);
     glGenBuffers(1, &m.ebo);
@@ -100,7 +118,7 @@ void Scene::addMesh(const MeshData &meshData)
 
     glBindVertexArray(0);
 
-    m_meshes.push_back(m);
+    m_meshes.emplace_back(std::move(m));
 }
 
 void swap(Scene &first, Scene &second) noexcept
