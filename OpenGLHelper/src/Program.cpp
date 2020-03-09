@@ -315,8 +315,7 @@ int Program::getUniformLocation(const std::string &name)
     if(u == m_uniformsLocation.cend())
     {
         location = glGetUniformLocation(m_glId, name.c_str());
-        std::string n2 = name;
-        m_uniformsLocation.insert({n2, location});
+        m_uniformsLocation.insert({name, location});
         if(location == INVALID_LOCATION)
             logWarning(__FUNCTION__, "Uniform not found: " + name);
     }
