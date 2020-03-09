@@ -55,7 +55,10 @@ public:
     friend void swap(Scene& first, Scene& second) noexcept;
 
 private:
+    static std::string getUniformPrefix(const TextureType t);
+
     void addMesh(MeshData &meshData);
+    void bindTextures(const std::vector<Texture2D> &textures, Program &p) const;
 
     std::vector<Mesh> m_meshes;
 

@@ -44,23 +44,25 @@ void Scene::draw(Program& p)
 
     for(const auto& m: m_meshes)
     {
-        unsigned int diffuseNbr = 1;
-        unsigned int specularNbr = 1;
-        const auto texturesCnt = static_cast<int>(m.textures.size());
-        for(int i = 0; i < texturesCnt; ++i)
-        {
-            const std::string textureName = (m.textures[i].getType() == TextureType::Specular) ?
-                        "material.specular" + std::to_string(specularNbr++)
-                      : "material.diffuse" + std::to_string(diffuseNbr++);
-            m.textures[i].use(i);
-            p.setUniform(textureName, i);
-        }
-        glActiveTexture(GL_TEXTURE0);
-
+        bindTextures(m.textures, p);
         glBindVertexArray(m.vao);
+
         glDrawElements(GL_TRIANGLES, m.indicesCount, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
+}
+
+std::string Scene::getUniformPrefix(const TextureType t)
+{
+    switch(t)
+    {
+    case TextureType::Diffuse:
+        return "material.diffuse";
+    case TextureType::Specular:
+        return "material.specular";
+    default:
+        return "material.texture";
+    }
 }
 
 void Scene::addMesh(MeshData &meshData)
@@ -119,6 +121,27 @@ void Scene::addMesh(MeshData &meshData)
     glBindVertexArray(0);
 
     m_meshes.emplace_back(std::move(m));
+}
+
+void Scene::bindTextures(const std::vector<Texture2D>& textures, Program& p) const
+{
+    const auto texturesCnt = static_cast<int>(textures.size());
+    for( int i = 0, diffuseNbr = 1, specularNbr = 1
+       ; i < texturesCnt
+       ; ++i)
+    {
+        const auto& t = textures[i];
+        const auto type = t.getType();
+
+        auto name = getUniformPrefix(type);
+        name += (type == TextureType::Specular) ? std::to_string(specularNbr++)
+              : (type == TextureType::Diffuse)  ? std::to_string(diffuseNbr++)
+              : "";
+
+        t.use(i);
+        p.setUniform(name, i);
+    }
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void swap(Scene &first, Scene &second) noexcept
