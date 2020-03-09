@@ -49,9 +49,7 @@ public:
         m_programMixedLight.setViewMatrix(unityMatrix);
         m_programMixedLight.setProjectionMatrix(unityMatrix);
         m_programMixedLight.setNormalMatrix(unityMatrix);
-        m_programMixedLight.setUniform("material.diffuse", 0);
-        m_programMixedLight.setUniform("material.specular", 1);
-        m_programMixedLight.setUniform("material.shininess", 32.0F);
+        m_programMixedLight.setUniform("material.shininess", 128.0F);
         m_programMixedLight.setUniform("dirLight.ambient", glm::vec3(0.1F));
         m_programMixedLight.setUniform("dirLight.diffuse", {0.5F, 0.5F, 0.5F});
         m_programMixedLight.setUniform("dirLight.specular", {1.0F, 1.0F, 1.0F});
@@ -129,7 +127,7 @@ public:
         m_programMixedLight.setModelMatrix(m_sceneModelMatrix);
         m_programMixedLight.setNormalMatrix(normalMatrix);
 
-        m_scene.draw();
+        m_scene.draw(m_programMixedLight);
 
         m_programLight.use();
         m_programLight.setViewMatrix(m_camera->getViewMatrix());
