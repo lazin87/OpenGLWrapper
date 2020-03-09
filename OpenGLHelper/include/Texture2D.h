@@ -8,6 +8,13 @@ namespace RL {
 
 namespace GL {
 
+enum class TextureType: int
+{
+    Common,
+    Diffuse,
+    Specular
+};
+
 class Texture2D
 {
 public:
@@ -22,8 +29,9 @@ public:
 
     ~Texture2D();
 
-    void use(const int index);
+    void use(const int index) const;
     unsigned int getId() const noexcept;
+    TextureType getType() const noexcept;
 
     friend void swap(Texture2D& first, Texture2D& second) noexcept;
 
@@ -32,10 +40,11 @@ private:
     int m_width {-1};
     int m_height {-1};
     int m_channelsNbr {-1};
+    TextureType m_type {TextureType::Common};
 };
 
 void swap(Texture2D& first, Texture2D& second) noexcept;
-Texture2D loadTexture2D(const std::string& path);
+Texture2D loadTexture2D(const std::string& path, const TextureType type = TextureType::Common);
 
 } // namespace GL
 

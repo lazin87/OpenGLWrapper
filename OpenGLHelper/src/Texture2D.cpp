@@ -97,7 +97,7 @@ Texture2D::~Texture2D()
     glDeleteTextures(1, &m_glId);
 }
 
-void Texture2D::use(const int index)
+void Texture2D::use(const int index) const
 {
     glActiveTexture(toGLTexture(index));
     glBindTexture(GL_TEXTURE_2D, m_glId);
@@ -108,7 +108,12 @@ unsigned int Texture2D::getId() const noexcept
     return m_glId;
 }
 
-Texture2D loadTexture2D(const std::string &path)
+TextureType Texture2D::getType() const noexcept
+{
+    return m_type;
+}
+
+Texture2D loadTexture2D(const std::string &path, const TextureType type)
 {
     ImageLoader l;
     const auto image = l.load(path);
@@ -125,6 +130,7 @@ void swap(Texture2D &first, Texture2D &second) noexcept
     swap(first.m_width, second.m_width);
     swap(first.m_height, second.m_height);
     swap(first.m_channelsNbr, second.m_channelsNbr);
+    swap(first.m_type, second.m_type);
 }
 
 } // namespace GL
