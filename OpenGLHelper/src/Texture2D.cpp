@@ -11,16 +11,18 @@ namespace GL {
 
 namespace  {
 
-int toGLPixelDataFormat(const ImageType type)
+int toGLPixelDataFormat(const int channelsNbr)
 {
-    switch(type)
+    switch(channelsNbr)
     {
-    case ImageType::PNG:
-        return GL_RGBA;
-    case ImageType::JPEG:
+    case 1:
+        return GL_RED;
+    case 3:
         return GL_RGB;
+    case 4:
+        return GL_RGBA;
     default:
-        return GL_INVALID_ENUM;
+        return GL_RGB;
     }
 }
 
@@ -79,7 +81,7 @@ Texture2D::Texture2D(const Image &image)
                 , m_width
                 , m_height
                 , 0
-                , toGLPixelDataFormat(image.type)
+                , toGLPixelDataFormat(m_channelsNbr)
                 , toGLPixelDataType(image.type)
                 , image.data);
     glGenerateMipmap(GL_TEXTURE_2D);
