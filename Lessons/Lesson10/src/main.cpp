@@ -144,6 +144,7 @@ public:
 
         m_PlaneVao.use();
         m_metalTexture.use(0);
+        m_program.setModelMatrix(unitMatrix);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
@@ -160,8 +161,8 @@ private:
     Program m_program;
     std::shared_ptr<Camera> m_camera;
 
-    glm::vec3 m_cube1Pos {-1.0f, 0.0f, -1.0f};
-    glm::vec3 m_cube2Pos {2.0f, 0.0f, 0.0f};
+    glm::vec3 m_cube1Pos {-1.0F, 0.01F, -1.0F};
+    glm::vec3 m_cube2Pos {2.0F, 0.01F, 0.0F};
 };
 
 int main()
