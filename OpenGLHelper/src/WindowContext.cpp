@@ -90,15 +90,17 @@ void WindowContext::enableMouseHandling()
 
 void WindowContext::show()
 {
+    if(!m_renderer) return;
+
     if(m_windowContext->window == nullptr)
         createWindow({"Default Window", 800, 600, 0, 0});
 
-    if(m_renderer) m_renderer->init();
+    m_renderer->init();
 
     const auto window = m_windowContext->window;
     while(!glfwWindowShouldClose(window))
     {
-        if(m_renderer) m_renderer->render();
+        m_renderer->render();
         if(m_inputHandler)
         {
             m_inputHandler->processInput(window);
